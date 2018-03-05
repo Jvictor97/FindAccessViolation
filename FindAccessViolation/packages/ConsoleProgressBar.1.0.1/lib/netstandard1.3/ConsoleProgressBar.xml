@@ -1,0 +1,184 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ConsoleProgressBar</name>
+    </assembly>
+    <members>
+        <member name="T:ConsoleProgressBar.ProgressChangedEventHandler">
+            <summary>
+            Represents the method that will handle the <see cref="E:ConsoleProgressBar.Progress.ProgressChanged"/> event raised when the progress changes.
+            </summary>
+            <param name="sender">The source of the event.</param>
+            <param name="eventArgs">A <see cref="T:ConsoleProgressBar.ProgressChangedEventArgs"/> that contains the event data.</param>
+        </member>
+        <member name="T:ConsoleProgressBar.Progress">
+            <summary>
+            Provides thread-safe hierarchical progress reporting. This class cannot be inherited.
+            </summary>
+        </member>
+        <member name="F:ConsoleProgressBar.Progress._status">
+            <remarks>Values *must* come from <see cref="T:ConsoleProgressBar.Progress.Status"/></remarks>
+        </member>
+        <member name="F:ConsoleProgressBar.Progress._progress">
+            <remarks>Used to accumulate progress from forks</remarks>
+        </member>
+        <member name="F:ConsoleProgressBar.Progress._forkMessage">
+            <remarks>Used when forking: Stores fork message, if any</remarks>
+        </member>
+        <member name="F:ConsoleProgressBar.Progress._lastProgress">
+            <remarks>Used by parent progress, if any</remarks>
+        </member>
+        <member name="F:ConsoleProgressBar.Progress._parentProgressChangedHandler">
+            <remarks>Used by sub progress to efficiently report to parent progress</remarks>
+        </member>
+        <member name="E:ConsoleProgressBar.Progress.ProgressChanged">
+            <summary>
+            Occurs when progress changes.
+            </summary>
+            <exception cref="T:System.ObjectDisposedException">The <see cref="T:ConsoleProgressBar.Progress"/> instance was already disposed.</exception>
+        </member>
+        <member name="M:ConsoleProgressBar.Progress.Report(System.Double)">
+            <summary>
+            Report progress.
+            </summary>
+            <param name="progress">Progress percentage.</param>
+            <exception cref="T:System.ObjectDisposedException">The <see cref="T:ConsoleProgressBar.Progress"/> instance was already disposed.</exception>
+            <exception cref="T:System.InvalidOperationException">The <see cref="M:ConsoleProgressBar.Progress.Fork(System.Double,System.String)"/> method was called on this <see cref="T:ConsoleProgressBar.Progress"/> instance.</exception>
+        </member>
+        <member name="M:ConsoleProgressBar.Progress.Report(System.Double,System.String)">
+            <summary>
+            Report progress with optional message.
+            </summary>
+            <param name="progress">Progress percentage.</param>
+            <param name="message">Optional message that will be reported with the current progress.</param>
+            <exception cref="T:System.ObjectDisposedException">The <see cref="T:ConsoleProgressBar.Progress"/> instance was already disposed.</exception>
+            <exception cref="T:System.InvalidOperationException">The <see cref="M:ConsoleProgressBar.Progress.Fork(System.Double,System.String)"/> method was called on this <see cref="T:ConsoleProgressBar.Progress"/> instance.</exception>
+        </member>
+        <member name="M:ConsoleProgressBar.Progress.Fork(System.Double,System.String)">
+            <summary>
+            Fork progress, optionally partly and with message.
+            </summary>
+            <param name="scale">Scale of the forked sub-progress. Percentage ≥0.</param>
+            <param name="message">Optional message that describes the sub-progress.</param>
+            <returns><see cref="T:ConsoleProgressBar.Progress"/> that is linked with and reports via this instance.</returns>
+        </member>
+        <member name="M:ConsoleProgressBar.Progress.Dispose">
+            <summary>
+            Finish the current <see cref="T:ConsoleProgressBar.Progress"/>, setting it to 100%. Disconnects all event handlers.
+            </summary>
+        </member>
+        <member name="T:ConsoleProgressBar.ProgressBar">
+            <summary>
+            Represents a console progress bar.
+            </summary>
+        </member>
+        <member name="M:ConsoleProgressBar.ProgressBar.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:ConsoleProgressBar.ProgressBar"/> class.
+            </summary>
+        </member>
+        <member name="P:ConsoleProgressBar.ProgressBar.StatusOnSeparateLine">
+            <summary>
+            Whether to show the associated message (if any) on a separate line
+            </summary>
+        </member>
+        <member name="P:ConsoleProgressBar.ProgressBar.Width">
+            <summary>
+            Gets or sets the width (percent) of the progress bar. Larger values may hide messages. Consider using <see cref="P:ConsoleProgressBar.ProgressBar.StatusOnSeparateLine"/>.
+            </summary>
+            <exception cref="T:System.ArgumentOutOfRangeException">Value was smaller than 0 or larger than 1 when setting.</exception>
+        </member>
+        <member name="P:ConsoleProgressBar.ProgressBar.Progress">
+            <summary>
+            Gets the progress bar’s root progress scope
+            </summary>
+        </member>
+        <member name="M:ConsoleProgressBar.ProgressBar.Dispose">
+            <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+        </member>
+        <member name="M:ConsoleProgressBar.ProgressBar.Dispose(System.Boolean)">
+            <summary>
+            Perform specific tasks to free resources.
+            </summary>
+            <param name="disposing"><c>true</c> if called from <see cref="M:ConsoleProgressBar.ProgressBar.Dispose"/>, <c>false</c> otherwise.</param>
+        </member>
+        <member name="M:ConsoleProgressBar.ProgressBar.Render(ConsoleProgressBar.ProgressChangedEventArgs)">
+            <summary>
+            Render progress bar to console.
+            </summary>
+            <param name="eventArgs">Progress event to render</param>
+        </member>
+        <member name="M:ConsoleProgressBar.ProgressBar.CreateStatusText(System.Collections.Generic.IReadOnlyList{System.String},System.Int32)">
+            <summary>
+            Format status text from list of messages.
+            </summary>
+            <param name="messages">List of messages, ordered from least specific to most specific.</param>
+            <param name="maxWidth">Maximum text width in characters.</param>
+            <returns>Status text, made to fit into <paramref name="maxWidth"/>.</returns>
+        </member>
+        <member name="T:ConsoleProgressBar.ProgressChangedEventArgs">
+            <summary>
+            Provides data for the <see cref="E:ConsoleProgressBar.Progress.ProgressChanged"/> event.
+            </summary>
+            <remarks>Uses fields for performance reasons</remarks>
+        </member>
+        <member name="M:ConsoleProgressBar.ProgressChangedEventArgs.#ctor(System.Double,System.Collections.Generic.IReadOnlyList{System.String})">
+            <summary>
+            Initializes a new instance of the <see cref="T:ConsoleProgressBar.ProgressChangedEventArgs"/> class.
+            </summary>
+            <param name="progress">Current progress percentage.</param>
+            <param name="messages">Collection of messages associated with current progress, ordered by specifity.</param>
+        </member>
+        <member name="F:ConsoleProgressBar.ProgressChangedEventArgs.Progress">
+            <summary>
+            Current progress percentage.
+            </summary>
+        </member>
+        <member name="F:ConsoleProgressBar.ProgressChangedEventArgs.Messages">
+            <summary>
+            Messages associated with current progress, ordered by specifity.
+            </summary>
+        </member>
+        <member name="T:ConsoleProgressBar.StringExtensions">
+            <summary>
+            Contains extension methods on <see cref="T:System.String" />.
+            </summary>
+        </member>
+        <member name="M:ConsoleProgressBar.StringExtensions.PadRightSurrogateAware(System.String,System.Int32,System.String)">
+            <summary>
+            Similar to <see cref="M:System.String.PadRight(System.Int32,System.Char)"/>, but aware of surrogate pairs.
+            </summary>
+            <param name="s">String to pad.</param>
+            <param name="length">Desired length.</param>
+            <param name="ps">Padding string, defaults to whitespace. Must represent single unicode code point.</param>
+            <returns>Padded string or original string if no padding was required.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="length"/> is negative.</exception>
+            <exception cref="T:System.ArgumentNullException"><paramref name="s"/> and/or <paramref name="ps"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="ps"/> did not represent single unicode codepoint.</exception>
+        </member>
+        <member name="M:ConsoleProgressBar.StringExtensions.SubstringSurrogateAware(System.String,System.Int32,System.Int32)">
+            <summary>
+            Similar to <see cref="M:System.String.Substring(System.Int32,System.Int32)"/>, but aware of surrogate pairs.
+            </summary>
+            <param name="s">String to extract from.</param>
+            <param name="startIndex">Start at index.</param>
+            <param name="length">Number of characters to take.</param>
+            <returns>Extract from string.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+                <paramref name="startIndex" /> and <paramref name="length" /> combine such that either end of the extract is out of bounds.
+            </exception>
+            <exception cref="T:System.ArgumentNullException"><paramref name="s"/> is  <c>null</c>.</exception>
+        </member>
+        <member name="M:ConsoleProgressBar.StringExtensions.LimitLength(System.String,System.Int32)">
+            <summary>
+            Limit length of string to given limit, clipping parts as appropriate. Surrogate aware.
+            </summary>
+            <param name="s">String to limit in length.</param>
+            <param name="maxLength">Maximum length.</param>
+            <returns>Length-limited version of <paramref name="s"/> or <paramref name="s"/> if length was already ≤<paramref name="maxLength"/>.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="s"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="maxLength"/> is smaller than 0.</exception>
+            <remarks>Not an optimal solution, pending replacement</remarks>
+        </member>
+    </members>
+</doc>
